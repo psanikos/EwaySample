@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">EwaySample</string>
+    <string name="mainSc">Main</string>
+    <string name="detailsSc">Details</string>
+    <string name="eway">My eWay</string>
+    <string name="homeSc">Αρχική</string>
+    <string name="newsSc"><![CDATA[Νέα&Προσφορές]]></string>
+    <string name="communicationSc">Επικοινωνία</string>
+    <string name="profileSc">Περισσότερα</string>
+</resources>
