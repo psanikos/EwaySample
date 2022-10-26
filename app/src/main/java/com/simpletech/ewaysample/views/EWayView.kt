@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -138,19 +139,19 @@ fun EWayView(
                         onShowFilter(FilterCategory.FILTER)
                     },
                     contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier.background(
+                    modifier = Modifier.width(107.dp).height(40.dp).background(
                         Color.White,
                         shape = RoundedCornerShape(61.dp)
                     )
                 ) {
                     Row(
                         modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             FontAwesomeIcons.Solid.Filter, contentDescription = "",
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(18.dp),
                             tint = orange_200
                         )
                         Text(
@@ -166,7 +167,7 @@ fun EWayView(
                         onShowFilter(FilterCategory.ORDER)
                     },
                     contentPadding = PaddingValues(0.dp),
-                    modifier = Modifier.background(
+                    modifier = Modifier.width(157.dp).height(40.dp).background(
                         Color.White,
                         shape = RoundedCornerShape(61.dp)
                     )
