@@ -23,6 +23,8 @@ class MainViewModel : ViewModel() {
     val concession = _concession
     private val _tollStations = MutableLiveData<List<String>>(listOf())
     val tollStations = _tollStations
+
+    // Gets data from stored JSON
     fun initData(context: Context) {
 
         try {
@@ -34,9 +36,13 @@ class MainViewModel : ViewModel() {
             Log.d("LOCALDATA", ("ERROR " + e.message))
         }
     }
+
+    // Selects transaction to show details
     fun selectTransaction(id: Long, date: String) {
         _currentTransaction.value = _data.value?.firstOrNull { it.id == id && it.transactionDate == date }
     }
+
+    // Sorts transactions
     fun sortBy(sort: SortingCategories) {
         _orderFilter.value = sort
         _filteredData.value = when (sort) {
@@ -51,6 +57,8 @@ class MainViewModel : ViewModel() {
             }?.reversed()
         }
     }
+
+    // Filters transactions
     fun filter() {
         if (!_concession.value.isNullOrEmpty()) {
             _filteredData.value = _data.value?.filter {
@@ -77,9 +85,12 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // Selects a single filter
     fun selectConcession(concession: String) {
         _concession.value = concession
     }
+
+    // Adds a filter
     fun changeTollStations(station: String, remove: Boolean) {
         if (remove) {
             _tollStations.value = _tollStations.value?.minus(station)
@@ -88,6 +99,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    // Clear all filters keeps sorting
     fun clearFilters() {
         _concession.value = ""
         _tollStations.value = listOf()
