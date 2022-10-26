@@ -44,7 +44,6 @@ fun EwaySampleTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
         }
     }
 
-
     MaterialTheme(
         colors = colors,
         typography = Typography,

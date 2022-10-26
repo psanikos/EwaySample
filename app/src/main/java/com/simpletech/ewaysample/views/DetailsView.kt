@@ -17,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,39 +38,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.simpletech.ewaysample.helpers.roundOffDecimal
-import com.simpletech.ewaysample.models.TransactionElement
 import com.simpletech.ewaysample.ui.theme.backColor
 import com.simpletech.ewaysample.ui.theme.barColors
-import com.simpletech.ewaysample.ui.theme.red_100
+import com.simpletech.ewaysample.ui.theme.black_100
+import com.simpletech.ewaysample.ui.theme.grey_100
+import com.simpletech.ewaysample.ui.theme.grey_80
 import com.simpletech.ewaysample.viewmodels.MainViewModel
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.ArrowDown
 import compose.icons.fontawesomeicons.solid.ChevronLeft
-import compose.icons.fontawesomeicons.solid.ChevronRight
-import kotlin.math.roundToInt
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailsView(model: MainViewModel,controller:NavController) {
+fun DetailsView(model: MainViewModel, controller: NavController) {
 
     val transaction by model.currentTransaction.observeAsState(null)
 
     val data = remember {
         derivedStateOf {
-            mutableStateOf(mapOf("Ημέρα/Ώρα" to (transaction?.transactionDate ?: "").replace("T"," - "),
-                "Πομποδέκτης" to (transaction?.transponderID ?: ""),
-                "Αυτοκινητόδρομος" to (transaction?.concession ?: ""),
-                "Σταθμός Διοδίων" to (transaction?.tollStation ?: ""),
-                "Λωρίδα" to (transaction?.lane?: ""),
-                "Κατηγορία" to (transaction?.tollCategory ?: ""),
-                "Τιμή (Προ έκπτωσης)" to (transaction?.amountWithoutDiscount ?: 0.0).roundOffDecimal().toString() + "€",
-                "Έκπτωση" to (transaction?.discount ?: 0.0).toDouble().roundOffDecimal().toString() + "€",
-                "Τιμή (Με έκπτωση)" to (transaction?.amountAfterDiscount ?: 0.0).roundOffDecimal().toString() + "€",
-                "ΦΠΑ" to  (transaction?.taxAmount ?: 0.0).roundOffDecimal().toString() + "€",
-                "Σύνολο" to (transaction?.totalAmount ?: 0.0).toString() + "€"))
-
+            mutableStateOf(
+                mapOf(
+                    "Ημέρα/Ώρα" to (transaction?.transactionDate ?: "").replace("T", " - "),
+                    "Πομποδέκτης" to (transaction?.transponderID ?: ""),
+                    "Αυτοκινητόδρομος" to (transaction?.concession ?: ""),
+                    "Σταθμός Διοδίων" to (transaction?.tollStation ?: ""),
+                    "Λωρίδα" to (transaction?.lane ?: ""),
+                    "Κατηγορία" to (transaction?.tollCategory ?: ""),
+                    "Τιμή (Προ έκπτωσης)" to (transaction?.amountWithoutDiscount ?: 0.0).roundOffDecimal().toString() + "€",
+                    "Έκπτωση" to (transaction?.discount ?: 0.0).toDouble().roundOffDecimal().toString() + "€",
+                    "Τιμή (Με έκπτωση)" to (transaction?.amountAfterDiscount ?: 0.0).roundOffDecimal().toString() + "€",
+                    "ΦΠΑ" to (transaction?.taxAmount ?: 0.0).roundOffDecimal().toString() + "€",
+                    "Σύνολο" to (transaction?.totalAmount ?: 0.0).toString() + "€"
+                )
+            )
         }
     }
 
@@ -90,10 +90,10 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                             fontWeight = FontWeight(700)
                         )
                         Text(
-                            (transaction?.transactionDate ?: "").replace("T"," - "),
+                            (transaction?.transactionDate ?: "").replace("T", " - "),
                             fontSize = 13.sp,
                             fontWeight = FontWeight(400),
-                            color = Color(0xFFAEAEAE)
+                            color = grey_100
                         )
                     }
                 },
@@ -114,7 +114,7 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                             FontAwesomeIcons.Solid.ChevronLeft,
                             contentDescription = "",
                             modifier = Modifier.size(18.dp),
-                            tint = Color(0xFF4A4A4A)
+                            tint = black_100
                         )
                     }
                 },
@@ -125,7 +125,6 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                     .graphicsLayer {
                         this.shadowElevation = 4f
                         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-
                     }
                     .background(
                         brush = Brush.verticalGradient(
@@ -134,7 +133,6 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                     )
             )
-
         },
         backgroundColor = backColor
     ) { innerPadding ->
@@ -158,7 +156,6 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                             shape = RoundedCornerShape(13.dp)
                         }
                         .background(Color.White, shape = RoundedCornerShape(13.dp))
-
                         .verticalScroll(state = ScrollState(0)),
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
@@ -169,9 +166,7 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                                 .height(56.dp)
                                 .fillMaxWidth()
                                 .background(
-                                    color = if (index % 2 == 0) Color.Transparent else Color(
-                                        0xFFF9F9F9
-                                    )
+                                    color = if (index % 2 == 0) Color.Transparent else grey_80
                                 ),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
@@ -180,13 +175,13 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                                 pair.first,
                                 fontWeight = FontWeight(700),
                                 fontSize = 12.sp,
-                                color = Color(0xFFAEAEAE)
+                                color = grey_100
                             )
                             Text(
                                 pair.second,
                                 fontWeight = FontWeight(400),
                                 fontSize = 14.sp,
-                                color = Color(0xFF4A4A4A)
+                                color = black_100
                             )
                         }
                     }

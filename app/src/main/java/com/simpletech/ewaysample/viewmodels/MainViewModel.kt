@@ -4,12 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.simpletech.ewaysample.helpers.SortingCategories
 import com.simpletech.ewaysample.models.TransactionElement
 import com.simpletech.ewaysample.services.LocalData
-import com.simpletech.ewaysample.views.subviews.SortingCategories
 import java.io.IOException
 
-class MainViewModel:ViewModel() {
+class MainViewModel : ViewModel() {
 
     private val _data = MutableLiveData<List<TransactionElement>>(listOf())
     val data = _data
@@ -23,24 +23,23 @@ class MainViewModel:ViewModel() {
     val concession = _concession
     private val _tollStations = MutableLiveData<List<String>>(listOf())
     val tollStations = _tollStations
-    fun initData(context: Context){
+    fun initData(context: Context) {
 
         try {
             _data.value = LocalData.getData(context)?.toList() ?: listOf()
             _filteredData.value = _data.value?.sortedBy {
                 it.transactionDate
             }?.reversed()
-        }catch (e:IOException){
-            Log.d("LOCALDATA", ("ERROR " + e.message) ?: "")
+        } catch (e: IOException) {
+            Log.d("LOCALDATA", ("ERROR " + e.message))
         }
-
-}
-    fun selectTransaction(id:Long,date:String){
-        _currentTransaction.value = _data.value?.firstOrNull { it.id == id && it.transactionDate == date}
     }
-    fun sortBy(sort:SortingCategories){
+    fun selectTransaction(id: Long, date: String) {
+        _currentTransaction.value = _data.value?.firstOrNull { it.id == id && it.transactionDate == date }
+    }
+    fun sortBy(sort: SortingCategories) {
         _orderFilter.value = sort
-        _filteredData.value = when(sort){
+        _filteredData.value = when (sort) {
             SortingCategories.RECENT -> _filteredData.value?.sortedBy {
                 it.transactionDate
             }?.reversed()
@@ -52,18 +51,18 @@ class MainViewModel:ViewModel() {
             }?.reversed()
         }
     }
-    fun filter(){
-       if(!_concession.value.isNullOrEmpty()){
-           _filteredData.value = _data.value?.filter {
-               it.concession == _concession.value
-           }
-       }
-        if(!_tollStations.value.isNullOrEmpty()) {
+    fun filter() {
+        if (!_concession.value.isNullOrEmpty()) {
+            _filteredData.value = _data.value?.filter {
+                it.concession == _concession.value
+            }
+        }
+        if (!_tollStations.value.isNullOrEmpty()) {
             _filteredData.value = _data.value?.filter {
                 _tollStations.value!!.contains(it.tollStation)
             }
         }
-        _filteredData.value =  when(_orderFilter.value){
+        _filteredData.value = when (_orderFilter.value) {
             SortingCategories.RECENT -> _filteredData.value?.sortedBy {
                 it.transactionDate
             }?.reversed()
@@ -76,27 +75,23 @@ class MainViewModel:ViewModel() {
 
             else -> _filteredData.value ?: listOf()
         }
+    }
 
-        }
-
-    fun selectConcession(concession:String){
+    fun selectConcession(concession: String) {
         _concession.value = concession
     }
-    fun changeTollStations(station:String,remove:Boolean){
-        if(remove){
+    fun changeTollStations(station: String, remove: Boolean) {
+        if (remove) {
             _tollStations.value = _tollStations.value?.minus(station)
-
-        }
-        else{
+        } else {
             _tollStations.value = _tollStations.value?.plus(station)
-
         }
     }
 
-    fun clearFilters(){
+    fun clearFilters() {
         _concession.value = ""
         _tollStations.value = listOf()
-        _filteredData.value =  when(_orderFilter.value){
+        _filteredData.value = when (_orderFilter.value) {
             SortingCategories.RECENT -> _data.value?.sortedBy {
                 it.transactionDate
             }?.reversed()

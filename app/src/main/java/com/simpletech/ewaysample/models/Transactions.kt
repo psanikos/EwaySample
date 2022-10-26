@@ -1,10 +1,9 @@
 package com.simpletech.ewaysample.models
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
 class Transaction(elements: Collection<TransactionElement>) : ArrayList<TransactionElement>(elements)
-data class TransactionElement (
+data class TransactionElement(
 
     @SerializedName("Id")
     val id: Long,
@@ -55,6 +54,4 @@ enum class Concession(val value: String) {
     EGNATIA("ΕΓΝΑΤΙΑ ΟΔΟΣ"),
     KENTRIKI("ΚΕΝΤΡΙΚΗ ΟΔΟΣ"),
     NEA("ΝΕΑ ΟΔΟΣ");
-
-
 }

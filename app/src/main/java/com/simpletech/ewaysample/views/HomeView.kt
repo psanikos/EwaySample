@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -23,9 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.simpletech.ewaysample.services.Navigation
 import com.simpletech.ewaysample.ui.theme.EwaySampleTheme
-import com.simpletech.ewaysample.ui.theme.backColor
 import com.simpletech.ewaysample.ui.theme.barColors
 import com.simpletech.ewaysample.ui.theme.red_100
 import compose.icons.FontAwesomeIcons
@@ -35,7 +32,7 @@ import compose.icons.fontawesomeicons.solid.ArrowDown
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(){
+fun HomeView() {
     Scaffold(
         topBar = {
 
@@ -63,7 +60,6 @@ fun HomeView(){
                     .graphicsLayer {
                         this.shadowElevation = 4f
                         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
-
                     }
                     .background(
                         brush = Brush.verticalGradient(
@@ -72,18 +68,16 @@ fun HomeView(){
                         shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                     )
             )
-
         },
         backgroundColor = red_100,
-    ) { innerPadding ->
+    ) { _ ->
         Box(modifier = Modifier.fillMaxSize())
     }
 }
 
-
 @Preview
 @Composable
-fun HomePreview(){
+fun HomePreview() {
     EwaySampleTheme {
         HomeView()
     }

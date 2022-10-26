@@ -2,8 +2,6 @@ package com.simpletech.ewaysample.services
 
 import android.content.Context
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.simpletech.ewaysample.models.Transaction
 import com.simpletech.ewaysample.models.TransactionElement
 import java.io.IOException
 
@@ -20,8 +18,8 @@ object LocalData {
                 .bufferedReader()
                 .use { it.readText() }
         } catch (exception: IOException) {
-         throw(exception)
+            throw(exception)
         }
-        return  Gson().fromJson(jsonString,Array<TransactionElement>::class.java)
+        return Gson().fromJson(jsonString, Array<TransactionElement>::class.java)
     }
 }
