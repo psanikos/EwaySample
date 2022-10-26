@@ -55,7 +55,7 @@ Row(modifier = Modifier
             horizontalArrangement = Arrangement.spacedBy(9.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Text(
-                transaction.transactionDate,
+                transaction.transactionDate.replace("T"," - "),
                 fontSize = 12.sp,
                 fontWeight = FontWeight(700),
                 color = Color(0xFFAEAEAE)

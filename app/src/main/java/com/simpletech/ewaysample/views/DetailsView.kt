@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.simpletech.ewaysample.helpers.roundOffDecimal
 import com.simpletech.ewaysample.models.TransactionElement
 import com.simpletech.ewaysample.ui.theme.backColor
 import com.simpletech.ewaysample.ui.theme.barColors
@@ -48,6 +49,7 @@ import compose.icons.fontawesomeicons.Solid
 import compose.icons.fontawesomeicons.solid.ArrowDown
 import compose.icons.fontawesomeicons.solid.ChevronLeft
 import compose.icons.fontawesomeicons.solid.ChevronRight
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,17 +60,17 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
 
     val data = remember {
         derivedStateOf {
-            mutableStateOf(mapOf("Ημέρα/Ώρα" to (transaction?.transactionDate ?: ""),
+            mutableStateOf(mapOf("Ημέρα/Ώρα" to (transaction?.transactionDate ?: "").replace("T"," - "),
                 "Πομποδέκτης" to (transaction?.transponderID ?: ""),
                 "Αυτοκινητόδρομος" to (transaction?.concession ?: ""),
                 "Σταθμός Διοδίων" to (transaction?.tollStation ?: ""),
                 "Λωρίδα" to (transaction?.lane?: ""),
                 "Κατηγορία" to (transaction?.tollCategory ?: ""),
-                "Τιμή (Προ έκπτωσης)" to (transaction?.amountWithoutDiscount ?: 0.0).toString(),
-                "Έκπτωση" to (transaction?.discount ?: 0.0).toString(),
-                "Τιμή (Με έκπτωση)" to (transaction?.amountAfterDiscount ?: 0.0).toString(),
-                "ΦΠΑ" to (transaction?.taxAmount ?: 0.0).toString(),
-                "Σύνολο" to (transaction?.totalAmount ?: 0.0).toString()))
+                "Τιμή (Προ έκπτωσης)" to (transaction?.amountWithoutDiscount ?: 0.0).roundOffDecimal().toString() + "€",
+                "Έκπτωση" to (transaction?.discount ?: 0.0).toDouble().roundOffDecimal().toString() + "€",
+                "Τιμή (Με έκπτωση)" to (transaction?.amountAfterDiscount ?: 0.0).roundOffDecimal().toString() + "€",
+                "ΦΠΑ" to  (transaction?.taxAmount ?: 0.0).roundOffDecimal().toString() + "€",
+                "Σύνολο" to (transaction?.totalAmount ?: 0.0).toString() + "€"))
 
         }
     }
@@ -88,7 +90,7 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                             fontWeight = FontWeight(700)
                         )
                         Text(
-                            transaction?.transactionDate ?: "",
+                            (transaction?.transactionDate ?: "").replace("T"," - "),
                             fontSize = 13.sp,
                             fontWeight = FontWeight(400),
                             color = Color(0xFFAEAEAE)
@@ -151,7 +153,12 @@ fun DetailsView(model: MainViewModel,controller:NavController) {
                         .padding(start = 16.dp, end = 16.dp, top = 24.dp)
                         .fillMaxWidth()
                         .wrapContentHeight()
+                        .graphicsLayer {
+                            shadowElevation = 8f
+                            shape = RoundedCornerShape(13.dp)
+                        }
                         .background(Color.White, shape = RoundedCornerShape(13.dp))
+
                         .verticalScroll(state = ScrollState(0)),
                     verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {

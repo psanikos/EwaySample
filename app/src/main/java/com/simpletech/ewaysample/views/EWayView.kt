@@ -76,6 +76,7 @@ import com.simpletech.ewaysample.ui.theme.backColor
 import com.simpletech.ewaysample.ui.theme.barColors
 import com.simpletech.ewaysample.viewmodels.MainViewModel
 import com.simpletech.ewaysample.views.subviews.InformCard
+import com.simpletech.ewaysample.views.subviews.SortingCategories
 import com.simpletech.ewaysample.views.subviews.TollInfoCard
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Solid
@@ -95,9 +96,10 @@ enum class FilterCategory{
 @Composable
 fun EWayView(controller: NavController,model:MainViewModel,onShowFilter:(FilterCategory)->Unit){
 
-    val transactions by model.data.observeAsState(listOf())
+    val transactions by model.filteredData.observeAsState(listOf())
+    val sortingFilter by model.orderFilter.observeAsState(SortingCategories.RECENT)
 
-        Scaffold(
+    Scaffold(
             topBar = {
 
                 CenterAlignedTopAppBar(
@@ -207,7 +209,7 @@ fun EWayView(controller: NavController,model:MainViewModel,onShowFilter:(FilterC
                         ) {
 
                             Text(
-                                "Πιο πρόσφατα",
+                                sortingFilter.value,
                                 fontWeight = FontWeight(400),
                                 fontSize = 14.sp,
                                 color = Color(0xFFFF8501)
@@ -220,16 +222,26 @@ fun EWayView(controller: NavController,model:MainViewModel,onShowFilter:(FilterC
                         }
                     }
                 }
-                transactions.forEach {
-                   Box(modifier = Modifier
-                       .wrapContentSize()
-                       .clickable {
-                           model.selectTransaction(it.id,it.transactionDate)
-                           controller.navigate(Navigation.DetailsScreen.route)
-                       }){
-                       TollInfoCard(transaction = it)
-                   }
-                }
+              when(transactions.size){
+                  0-> Box(modifier = Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center){
+                      Text(
+                          "Δεν βρέθηκαν αποτελέσματα",
+                          fontWeight = FontWeight(400),
+                          fontSize = 14.sp, color = Color.Black
+
+                      )
+                  }
+                  else->   transactions.forEach {
+                      Box(modifier = Modifier
+                          .wrapContentSize()
+                          .clickable {
+                              model.selectTransaction(it.id, it.transactionDate)
+                              controller.navigate(Navigation.DetailsScreen.route)
+                          }){
+                          TollInfoCard(transaction = it)
+                      }
+                  }
+              }
                 OutlinedButton(
                     onClick = { /*TODO*/ },
                     shape = RoundedCornerShape(107.dp),

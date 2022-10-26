@@ -1,6 +1,7 @@
 package com.simpletech.ewaysample.views.subviews
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.RadioButton
@@ -24,7 +26,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,16 +39,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.simpletech.ewaysample.viewmodels.MainViewModel
 
 enum class SortingCategories(val value:String){
     RECENT("Πιο πρόσφατα"),LOW_HIGH("Άυξουσα τιμή"),HIGH_LOW("Φθίνουσα τιμή")
 }
 @Composable
-fun OrderCard(){
+fun OrderCard(model:MainViewModel,onApplyFilter:()->Unit){
 
     var selectedCategory by remember {
         mutableStateOf(SortingCategories.RECENT)
     }
+    val modelFilter = model.orderFilter.observeAsState()
+
+    LaunchedEffect(key1 = Unit, block = {
+        modelFilter.value?.let {
+        selectedCategory = it
+        }
+    })
 
 Column(
     modifier = Modifier
@@ -110,7 +123,8 @@ Column(
   }
     OutlinedButton(
         onClick ={
-
+        model.sortBy(selectedCategory)
+            onApplyFilter()
         } ,
     modifier = Modifier
         .padding(start = 8.dp, end = 8.dp)
@@ -135,26 +149,39 @@ enum class SortingFilters(val value:String){
     CAT1("Radio strip"),CAT2("Radio strip"),CAT3("Radio strip")
 }
 @Composable
-fun FilterCard(){
+fun FilterCard(model:MainViewModel,onApplyFilter:()->Unit){
 
-    var selectedCategory by remember {
-        mutableStateOf(SortingFilters.CAT1)
+    val data by model.data.observeAsState()
+
+    val radioButtons by remember {
+        derivedStateOf {
+            mutableStateOf(
+                data?.map {
+
+                    it.concession
+                }?.distinct()
+            )
+        }
     }
-    var checkBox1Selected by remember {
-        mutableStateOf(false)
+    val checkBoxes by remember {
+        derivedStateOf {
+            mutableStateOf(
+                data?.map {
+                    it.tollStation
+                }?.distinct()
+            )
+        }
     }
-    var checkBox2Selected by remember {
-        mutableStateOf(false)
-    }
-    var checkBox3Selected by remember {
-        mutableStateOf(false)
-    }
+    val selectedCheckBoxes by model.tollStations.observeAsState(listOf())
+
+    val selectedRadio by model.concession.observeAsState()
 
     Column(
         modifier = Modifier
             .padding(start = 16.dp, top = 12.dp, bottom = 36.dp, end = 16.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
+            .height(704.dp)
+            .verticalScroll(state = ScrollState(0))
     ) {
         Row(modifier = Modifier
             .padding(bottom = 32.dp)
@@ -179,7 +206,9 @@ fun FilterCard(){
                 color = Color(0xFF4A4A4A)
             )
 
-                TextButton(onClick = { /*TODO*/ }) {
+                TextButton(onClick = {
+                    model.clearFilters()
+                }) {
                     Text("Καθαρισμός ->",
                     fontWeight = FontWeight(700),
                     fontSize = 14.sp,
@@ -196,8 +225,8 @@ fun FilterCard(){
         Column(modifier = Modifier.padding(top = 20.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            radioButtons.value?.forEach {
 
-            SortingFilters.values().forEach {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -214,9 +243,9 @@ fun FilterCard(){
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
-                            selected = selectedCategory == it,
+                            selected = selectedRadio == it,
                             onClick = {
-                                selectedCategory = it
+                               model.selectConcession(it)
                             },
                             colors = androidx.compose.material.RadioButtonDefaults.colors(
                                 selectedColor = Color(0xFFF3830E),
@@ -224,8 +253,8 @@ fun FilterCard(){
 
                                 ),
                             modifier = Modifier.size(24.dp))
-                        Text(it.value,
-                            fontWeight = FontWeight(if(selectedCategory == it) 700 else 400),
+                        Text(it,
+                            fontWeight = FontWeight(if(selectedRadio == it) 700 else 400),
                             fontSize = 16.sp)
                     }
                 }
@@ -241,95 +270,45 @@ fun FilterCard(){
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                ,
-                shape = RoundedCornerShape(13.dp),
-                color = Color(0xFFFFFBF8),
-                shadowElevation = 4.dp
-            ) {
-                Row(
-                    Modifier
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = checkBox1Selected, onCheckedChange = {
-                        checkBox1Selected = it
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color(0xFFF3830E),
-                        uncheckedColor = Color(0xFFFFE0BD)
-                    )
+            checkBoxes.value?.forEach {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                    ,
+                    shape = RoundedCornerShape(13.dp),
+                    color = Color(0xFFFFFBF8),
+                    shadowElevation = 4.dp
+                ) {
+                    Row(
+                        Modifier
+                            .padding(horizontal = 12.dp, vertical = 16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = selectedCheckBoxes.contains(it),
+                            onCheckedChange = { add ->
+                                model.changeTollStations(it,!add)
+                        },
+                            colors = CheckboxDefaults.colors(
+                                checkedColor = Color(0xFFF3830E),
+                                uncheckedColor = Color(0xFFFFE0BD)
+                            )
                         )
-                    Text(if(checkBox1Selected) "Selected checkbox" else "Unselected checkbox",
-                        fontWeight = FontWeight(if(checkBox1Selected) 700 else 400),
-                        fontSize = 16.sp)
+                        Text(it,
+                            fontWeight = FontWeight(if(selectedCheckBoxes.contains(it)) 700 else 400),
+                            fontSize = 16.sp)
+                    }
                 }
             }
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                ,
-                shape = RoundedCornerShape(13.dp),
-                color = Color(0xFFFFFBF8),
-                shadowElevation = 4.dp
-            ) {
-                Row(
-                    Modifier
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = checkBox2Selected, onCheckedChange = {
-                        checkBox2Selected = it
-                    },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color(0xFFF3830E),
-                            uncheckedColor = Color(0xFFFFE0BD)
-                        )
-                    )
-                    Text(if(checkBox2Selected) "Selected checkbox" else "Unselected checkbox",
-                        fontWeight = FontWeight(if(checkBox2Selected) 700 else 400),
-                        fontSize = 16.sp)
-                }
-            }
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                ,
-                shape = RoundedCornerShape(13.dp),
-                color = Color(0xFFFFFBF8),
-                shadowElevation = 4.dp
-            ) {
-                Row(
-                    Modifier
-                        .padding(horizontal = 12.dp, vertical = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(checked = checkBox3Selected, onCheckedChange = {
-                        checkBox3Selected = it
-                    },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color(0xFFF3830E),
-                            uncheckedColor = Color(0xFFFFE0BD)
-                        )
-                    )
-                    Text(if(checkBox3Selected) "Selected checkbox" else "Unselected checkbox",
-                        fontWeight = FontWeight(if(checkBox3Selected) 700 else 400),
-                        fontSize = 16.sp)
-                }
-            }
+
+
 
         }
         OutlinedButton(
             onClick ={
-
+            model.filter()
+                onApplyFilter()
             } ,
             modifier = Modifier
                 .padding(start = 8.dp, end = 8.dp)

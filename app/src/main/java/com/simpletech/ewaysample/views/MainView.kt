@@ -111,8 +111,16 @@ fun MainView(model: MainViewModel) {
             .fillMaxWidth()
             .wrapContentHeight()){
            when(filterCategory){
-               FilterCategory.ORDER -> OrderCard()
-               FilterCategory.FILTER -> FilterCard()
+               FilterCategory.ORDER -> OrderCard(model){
+                 scope.launch {
+                     sheetState.animateTo(ModalBottomSheetValue.Hidden)
+                 }
+               }
+               FilterCategory.FILTER -> FilterCard(model){
+                   scope.launch {
+                       sheetState.animateTo(ModalBottomSheetValue.Hidden)
+                   }
+               }
            }
         }
     },
