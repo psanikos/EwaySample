@@ -112,6 +112,9 @@ fun EWayView(
         },
         backgroundColor = backColor,
     ) { innerPadding ->
+
+        // Used vertical scroll not LazyColumn because its choppy on large data
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
